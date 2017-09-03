@@ -12,6 +12,7 @@ namespace TestLocalization3.Localization
         public void Configure(IApplicationBuilder app,
             IOptions<RequestLocalizationOptions> options)
         {
+
             app.UseRequestLocalization(options.Value);
         }
     }

@@ -1,4 +1,4 @@
-@inject Microsoft.ApplicationInsights.AspNetCore.JavaScriptSnippet JavaScriptSnippet
+﻿@inject Microsoft.ApplicationInsights.AspNetCore.JavaScriptSnippet JavaScriptSnippet
 <!DOCTYPE html>
 <html>
 <head>
@@ -43,7 +43,12 @@
         @RenderBody()
         <hr />
         <footer>
-            <p>&copy; 2017 - TestLocalization3</p>
+            <div class="col-md-6">
+                <p>&copy; 2017 - TestLocalization3</p>
+            </div>
+            <div class="col-md-6 text-right">
+                @await Html.PartialAsync("_SelectLanguagePartial")
+            </div>
         </footer>
     </div>
 

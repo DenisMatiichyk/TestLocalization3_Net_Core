@@ -5,9 +5,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Localization.Routing;
 using Microsoft.AspNetCore.Mvc.Razor;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -114,6 +116,7 @@ namespace TestLocalization3
                     name: "defaultWithCulture",
                 template: "{ui-culture}/{controller=Home}/{action=Index}/{id?}");
 
+                
                 //routes.MapRoute(
                 //    name: "default",
                 //    template: "{controller=Home}/{action=Index}/{id?}");

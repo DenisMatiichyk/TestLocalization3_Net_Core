@@ -15,7 +15,8 @@ namespace TestLocalization3.Controllers
     //  [Route("{culture}/[controller]")]
     public class HomeController : Controller
     {
-        
+        private string _currentLanguage;
+
         [HttpGet]
         public IActionResult Index()
         {
@@ -26,11 +27,15 @@ namespace TestLocalization3.Controllers
             Console.WriteLine($"UI Culture:{feature.RequestCulture.UICulture}");
             Console.WriteLine($"Provider:{feature.Provider}");
 
-           // TryChangeLanguage();
+            // TryChangeLanguage();
 
             //CultureInfo.CurrentUICulture = new CultureInfo(feature.RequestCulture.Culture.ToString());
             //CultureInfo.CurrentUICulture = new CultureInfo(feature.RequestCulture.Culture.ToString());
 
+            if (string.IsNullOrEmpty(_currentLanguage))
+            {
+               // SetDefaulLanguage();
+            }
 
             return View();
         }
@@ -44,7 +49,7 @@ namespace TestLocalization3.Controllers
         public IActionResult About()
         {
             ViewData["Message"] = "Your application description page.";
-           // TryChangeLanguage();
+            //TryChangeLanguage();
             return View();
         }
 
@@ -60,13 +65,63 @@ namespace TestLocalization3.Controllers
             return View();
         }
 
-        private void TryChangeLanguage()
+        private void TryChangeLanguage(string culture)
         {
+            
             IRequestCultureFeature feature = HttpContext.Features.Get<IRequestCultureFeature>();
             Response.Cookies.Append(
                 CookieRequestCultureProvider.DefaultCookieName,
-                CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(feature.RequestCulture.UICulture.ToString())),
+              //  CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(feature.RequestCulture.UICulture.ToString())),
+                CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)),
                 new CookieOptions {Expires = DateTimeOffset.UtcNow.AddYears(1)});
+        }
+
+        private void SetDefaulLanguage()
+        {
+            var culture = CurrentLanguage;
+            //if (lang == "et")
+            //{
+            //    lang = "ee";
+            //}
+            var feature =Request.HttpContext.Features.Get<IRequestCultureFeature>();
+            var lang = feature.RequestCulture.Culture.TwoLetterISOLanguageName.ToLower();
+
+            TryChangeLanguage(culture);
+
+            
+        }
+
+        private string CurrentLanguage
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(_currentLanguage))
+                {
+                    return _currentLanguage;
+                }
+
+
+
+                if (string.IsNullOrEmpty(_currentLanguage))
+                {
+                    var feature = HttpContext.Features.Get<IRequestCultureFeature>();
+                    _currentLanguage = feature.RequestCulture.Culture.TwoLetterISOLanguageName.ToLower();
+                }
+
+                return _currentLanguage;
+            }
+        }
+
+        [HttpPost]
+        public IActionResult SetLanguage(string culture, string returnUrl)
+        {
+            Response.Cookies.Append(
+                CookieRequestCultureProvider.DefaultCookieName,
+                CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)),
+                new CookieOptions { Expires = DateTimeOffset.UtcNow.AddYears(1) }
+            );
+
+            return LocalRedirect(returnUrl);
         }
 
     }
