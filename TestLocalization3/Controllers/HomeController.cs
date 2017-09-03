@@ -34,7 +34,7 @@ namespace TestLocalization3.Controllers
 
             if (string.IsNullOrEmpty(_currentLanguage))
             {
-               // SetDefaulLanguage();
+                // SetDefaulLanguage();
             }
 
             return View();
@@ -67,13 +67,13 @@ namespace TestLocalization3.Controllers
 
         private void TryChangeLanguage(string culture)
         {
-            
+
             IRequestCultureFeature feature = HttpContext.Features.Get<IRequestCultureFeature>();
             Response.Cookies.Append(
                 CookieRequestCultureProvider.DefaultCookieName,
-              //  CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(feature.RequestCulture.UICulture.ToString())),
+                //  CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(feature.RequestCulture.UICulture.ToString())),
                 CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)),
-                new CookieOptions {Expires = DateTimeOffset.UtcNow.AddYears(1)});
+                new CookieOptions { Expires = DateTimeOffset.UtcNow.AddYears(1) });
         }
 
         private void SetDefaulLanguage()
@@ -83,12 +83,12 @@ namespace TestLocalization3.Controllers
             //{
             //    lang = "ee";
             //}
-            var feature =Request.HttpContext.Features.Get<IRequestCultureFeature>();
+            var feature = Request.HttpContext.Features.Get<IRequestCultureFeature>();
             var lang = feature.RequestCulture.Culture.TwoLetterISOLanguageName.ToLower();
 
             TryChangeLanguage(culture);
 
-            
+
         }
 
         private string CurrentLanguage
@@ -115,6 +115,9 @@ namespace TestLocalization3.Controllers
         [HttpPost]
         public IActionResult SetLanguage(string culture, string returnUrl)
         {
+
+            returnUrl = FixURLIfContainsCulture(culture, returnUrl);
+
             Response.Cookies.Append(
                 CookieRequestCultureProvider.DefaultCookieName,
                 CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)),
@@ -122,6 +125,21 @@ namespace TestLocalization3.Controllers
             );
 
             return LocalRedirect(returnUrl);
+        }
+
+        private string FixURLIfContainsCulture(string culture,string returnUrl)
+        {
+            var urlItems = returnUrl.Split('/').ToList();
+            if (urlItems.Count > 3)
+            {
+                urlItems.RemoveRange(0, 2);
+                returnUrl = "/" + culture;
+                foreach (var item in urlItems)
+                {
+                    returnUrl += "/" + item;
+                }
+            }
+            return returnUrl;
         }
 
     }
