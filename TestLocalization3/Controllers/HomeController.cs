@@ -116,7 +116,11 @@ namespace TestLocalization3.Controllers
         public IActionResult SetLanguage(string culture, string returnUrl)
         {
 
-            returnUrl = FixURLIfContainsCulture(culture, returnUrl);
+            returnUrl = SetNewCultureURL(culture, returnUrl);
+
+
+
+            //Response.Cookies.Delete(CookieRequestCultureProvider.DefaultCookieName);
 
             Response.Cookies.Append(
                 CookieRequestCultureProvider.DefaultCookieName,
@@ -127,7 +131,7 @@ namespace TestLocalization3.Controllers
             return LocalRedirect(returnUrl);
         }
 
-        private string FixURLIfContainsCulture(string culture,string returnUrl)
+        private string SetNewCultureURL(string culture, string returnUrl)
         {
             var urlItems = returnUrl.Split('/').ToList();
             if (urlItems.Count > 3)
@@ -138,8 +142,10 @@ namespace TestLocalization3.Controllers
                 {
                     returnUrl += "/" + item;
                 }
+                return returnUrl;
             }
-            return returnUrl;
+            
+            return /*"/" + culture +*/ returnUrl;
         }
 
     }
